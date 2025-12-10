@@ -1,0 +1,1 @@
+include "core", "desktop",'gdx','gdx-box2d','gdx-jnigen'

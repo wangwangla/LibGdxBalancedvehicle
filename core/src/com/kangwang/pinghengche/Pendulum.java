@@ -1,0 +1,84 @@
+package com.kangwang.pinghengche;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Joint;
+import com.badlogic.gdx.physics.box2d.joints.WeldJointDef;
+import com.badlogic.gdx.physics.box2d.joints.WheelJoint;
+import com.badlogic.gdx.physics.box2d.joints.WheelJointDef;
+import com.badlogic.gdx.utils.Array;
+import com.kangwang.WorldConstant;
+import com.kangwang.word.Constant;
+
+import java.util.Map;
+
+public class Pendulum {
+    private final float PI = 3.141f;
+    private Box cart;
+    private Circle wheel;
+    private Box stick;
+    private Box handle;
+    private Array<Body> elements = new Array();
+    private  WheelJoint wheelJoint;
+    private  Vector2 temp = new Vector2();
+
+    public Pendulum(float x,float y){
+        float len = 96.0F;
+        this.cart = new Box(x,y,30,16);
+        this.wheel = new Circle(x,y,24);
+        this.stick = new Box(x,y,8,len,true);
+        this.handle = new Box(x,y,32,16);
+//
+        WeldJointDef weldJointDef = new WeldJointDef();
+        weldJointDef.bodyA = this.cart.body;
+        weldJointDef.bodyB = this.stick.body;
+        weldJointDef.localAnchorB.set(WorldConstant.convert(0),WorldConstant.convert(-len/2));
+        Constant.world.createJoint(weldJointDef);
+//
+        weldJointDef = new WeldJointDef();
+        weldJointDef.bodyA = this.handle.body;
+        weldJointDef.bodyB = this.stick.body;
+        weldJointDef.localAnchorB.set(WorldConstant.convert(0),WorldConstant.convert(len/2));
+        Constant.world.createJoint(weldJointDef);
+
+        WheelJointDef weldJointDef1 = new WheelJointDef();
+        weldJointDef1.bodyA = this.wheel.body;
+        weldJointDef1.bodyB = this.cart.body;
+
+        weldJointDef1.frequencyHz = 80;
+        weldJointDef1.dampingRatio = 2.0F;
+        weldJointDef1.maxMotorTorque = 9999f;
+
+        wheelJoint = (WheelJoint) Constant.world.createJoint(weldJointDef1);
+        wheelJoint.enableMotor(true);
+        wheelJoint.setMotorSpeed(0);
+
+        elements.add(wheel.body,stick.body,handle.body);
+    }
+
+
+    public Vector2 getPosition() {
+        Vector2 position = this.wheel.body.getPosition();
+        temp.set(WorldConstant.reconvert(position.x),
+                WorldConstant.reconvert(position.y));
+        return temp;
+    }
+
+    public Vector2 getVelocity() {
+        return this.cart.body.getLinearVelocity();
+    }
+
+    public float getAngleRadians() {
+        float radians = this.stick.body.getAngle();
+        while(radians >  PI) radians -= 2*PI;
+        while(radians < -PI) radians += 2*PI;
+        return radians;
+    }
+
+    public void setMotorSpeed(float speed) {
+        this.wheelJoint.enableMotor(true);
+        this.wheelJoint.setMotorSpeed(speed);
+    }
+
+}
