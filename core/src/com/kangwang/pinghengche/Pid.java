@@ -1,7 +1,7 @@
 package com.kangwang.pinghengche;
 
 public class Pid {
-    private int integral;
+    private float integral;
     float p;
     float i;
     float d;

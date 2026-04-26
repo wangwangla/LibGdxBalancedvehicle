@@ -23,7 +23,7 @@ public class MainGame extends Game {
         viewport = new ExtendViewport(860,340);
         resize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         batch = new CpuSpriteBatch();
-        Constant.world = new World(new Vector2(0,-43.8F),true);
+        Constant.world = new World(new Vector2(0,-20F),true);
         Constant.renderer = new Box2DDebugRenderer();
         setScreen(new GameScreen(this));
     }
