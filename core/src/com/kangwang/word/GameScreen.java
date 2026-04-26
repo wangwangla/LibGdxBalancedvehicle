@@ -16,6 +16,7 @@ import com.kangwang.pinghengche.PhcView;
 public class GameScreen extends ScreenAdapter {
     private Stage stage;
     private InputMultiplexer inputMultiplexer;
+    private PhcView view;
     public GameScreen(MainGame mainGame) {
         inputMultiplexer = new InputMultiplexer();
         stage =  new Stage(mainGame.getViewport(),mainGame.getBatch());
@@ -25,7 +26,7 @@ public class GameScreen extends ScreenAdapter {
 
     @Override
     public void show() {
-        PhcView view = new PhcView();
+        view = new PhcView();
         stage.addActor(view);
         stage.addListener(new ClickListener(){
             @Override
@@ -40,5 +41,15 @@ public class GameScreen extends ScreenAdapter {
     public void render(float delta) {
         stage.act();
         stage.draw();
+    }
+
+    @Override
+    public void dispose() {
+        if (view != null) {
+            view.dispose();
+        }
+        if (stage != null) {
+            stage.dispose();
+        }
     }
 }
