@@ -46,9 +46,9 @@ public class Pendulum {
         weldJointDef1.bodyA = this.wheel.body;
         weldJointDef1.bodyB = this.cart.body;
 
-        weldJointDef1.frequencyHz = 30;
-        weldJointDef1.dampingRatio = 1.0F;
-        weldJointDef1.maxMotorTorque = 1000f;
+        weldJointDef1.frequencyHz = 80;
+        weldJointDef1.dampingRatio = 2.0F;
+        weldJointDef1.maxMotorTorque = 9999f;
 
         wheelJoint = (WheelJoint) Constant.world.createJoint(weldJointDef1);
         wheelJoint.enableMotor(true);

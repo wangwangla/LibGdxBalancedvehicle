@@ -44,35 +44,39 @@ public class PhcView extends Group {
                 WorldConstant.PPM,
                 WorldConstant.PPM);
 
-        Constant.renderer.render(Constant.world, combined);
+        Constant.renderer.render(Constant.world,combined);
         time += delta;
         if (time > 0.6) {
             Vector2 pos = pendulum.getPosition();
+            Vector2 velocity = pendulum.getVelocity();
+            filter.push(velocity.x);
+            float smoothVelocity = filter.getValue();
 
-        Vector2 velocity = pendulum.getVelocity();
-        filter.push(velocity.x);
-        float smoothVelocity = filter.getValue();
+            float predictPos = pos.x + 25 * smoothVelocity;
+            if((predictPos - targetX) * (pos.x-targetX) < 0) {
+                predictPos = pos.x + 100 * smoothVelocity;
+            }
 
-        float predictPos = pos.x + 25 * smoothVelocity;
-        if ((predictPos - targetX) * (pos.x - targetX) < 0) {
-            predictPos = pos.x + 100 * smoothVelocity;
-        }
+        float targetAngle = rectify(-((predictPos - targetX))/130f,
+                -0.15f, 0.15f);
 
-        float targetAngle = rectify(-(predictPos - targetX) / Constant.width * MathUtils.PI / 5,
-                -0.25f, 0.25f);
+            if (-Math.abs(predictPos-targetX) < 30) {
+                targetAngle = rectify(-(predictPos-targetX)/20,
+                        -0.15f, 0.15f);
+            }
 
-        float nowAngle = pendulum.getAngleRadians();
-        if (
-                Math.abs(10 * smoothVelocity) > 60 &&
-                        (predictPos - targetX) * (pos.x - targetX) >= 0 &&
-                        (predictPos - targetX) * smoothVelocity < 0
-        ) {
-            targetAngle = 0;
-        }
-        pid.setcError(targetAngle - nowAngle);
+            float nowAngle = -pendulum.getAngleRadians();
+            if(
+                    Math.abs(1 * smoothVelocity) > 30 &&
+                            (predictPos - targetX) * (pos.x-targetX) >= 0 &&
+                            (predictPos - targetX) * smoothVelocity < 0
+            ) {
+                targetAngle = 0;
+            }
+            pid.setcError(targetAngle-nowAngle);
             pid.step(delta);
-        float speed = pid.getOutput();
-        pendulum.setMotorSpeed(speed * 330);
+            float speed = -pid.getOutput();
+            pendulum.setMotorSpeed(speed*330);
         }
     }
 
