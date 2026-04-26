@@ -81,4 +81,11 @@ public class Pendulum {
         this.wheelJoint.setMotorSpeed(speed);
     }
 
+    public Circle getWheel() {
+        return wheel;
+    }
+
+    public Box getHandle() {
+        return handle;
+    }
 }

@@ -2,6 +2,7 @@ package com.kangwang.pinghengche;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
@@ -9,9 +10,12 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.FloatArray;
 import com.kangwang.WorldConstant;
+import com.kangwang.view.BodyActor;
 import com.kangwang.word.Constant;
 
 public class PhcView extends Group {
@@ -43,6 +47,13 @@ public class PhcView extends Group {
         guideRenderer = new ShapeRenderer();
         predictX = targetX;
         velocityDebugValues = new FloatArray();
+        BodyActor wheel = new BodyActor(new Texture("car.png"),pendulum.getWheel().body);
+        addActor(wheel);
+        wheel.setOrigin(Align.center);
+        BodyActor joker = new BodyActor(new Texture("joker.png"),pendulum.getHandle().body);
+        addActor(joker);
+        joker.setOrigin(Align.bottom);
+
     }
 
     public float rectify(float x,float minValue,float maxValue) {
@@ -56,12 +67,7 @@ public class PhcView extends Group {
     public void act(float delta) {
         super.act(delta);
         Constant.world.step(1/60f, 3, 8);
-        combined.set(Constant.combined);
-        combined.scale(WorldConstant.PPM,
-                WorldConstant.PPM,
-                WorldConstant.PPM);
 
-        Constant.renderer.render(Constant.world,combined);
         time += delta;
         if (time > 0.6) {
             Vector2 pos = pendulum.getPosition();
@@ -111,6 +117,12 @@ public class PhcView extends Group {
             return;
         }
         batch.end();
+        combined.set(Constant.combined);
+        combined.scale(WorldConstant.PPM,
+                WorldConstant.PPM,
+                WorldConstant.PPM);
+
+        Constant.renderer.render(Constant.world,combined);
         guideRenderer.setProjectionMatrix(getStage().getCamera().combined);
         guideRenderer.begin(ShapeRenderer.ShapeType.Line);
         guideRenderer.setColor(TOP_LINE_COLOR);
